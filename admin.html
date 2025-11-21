@@ -889,14 +889,19 @@
                 colors: { primary: '#00d4ff', secondary: '#8338ec', accent: '#ff006e' }
             },
             {
-                name: 'Christmas',
-                id: 'christmas',
-                colors: { primary: '#dc143c', secondary: '#228b22', accent: '#ffd700' }
+                name: 'New Year',
+                id: 'newyear',
+                colors: { primary: '#ffd700', secondary: '#c0c0', accent: '#ff1493' }
             },
             {
-                name: 'Halloween',
-                id: 'halloween',
-                colors: { primary: '#ff6600', secondary: '#000000', accent: '#ff00ff' }
+                name: 'Valentine',
+                id: 'valentine',
+                colors: { primary: '#ff1493', secondary: '#ff69b4', accent: '#ffd700' }
+            },
+            {
+                name: "St. Patrick's",
+                id: 'stpatricks',
+                colors: { primary: '#008000', secondary: '#90ee90', accent: '#ffd700' }
             },
             {
                 name: 'Easter',
@@ -904,9 +909,39 @@
                 colors: { primary: '#ff69b4', secondary: '#00ced1', accent: '#ffd700' }
             },
             {
-                name: 'Valentine',
-                id: 'valentine',
-                colors: { primary: '#ff1493', secondary: '#ff69b4', accent: '#ffd700' }
+                name: 'Memorial Day',
+                id: 'memorialday',
+                colors: { primary: '#dc143c', secondary: '#ffffff', accent: '#000080' }
+            },
+            {
+                name: '4th of July',
+                id: 'july4th',
+                colors: { primary: '#dc143c', secondary: '#ffffff', accent: '#000080' }
+            },
+            {
+                name: 'Labor Day',
+                id: 'laborday',
+                colors: { primary: '#4169e1', secondary: '#ffffff', accent: '#dc143c' }
+            },
+            {
+                name: 'Halloween',
+                id: 'halloween',
+                colors: { primary: '#ff6600', secondary: '#000000', accent: '#ff00ff' }
+            },
+            {
+                name: 'Veterans Day',
+                id: 'veteransday',
+                colors: { primary: '#dc143c', secondary: '#000080', accent: '#ffd700' }
+            },
+            {
+                name: 'Thanksgiving',
+                id: 'thanksgiving',
+                colors: { primary: '#d2691e', secondary: '#ff8c00', accent: '#8b4513' }
+            },
+            {
+                name: 'Christmas',
+                id: 'christmas',
+                colors: { primary: '#dc143c', secondary: '#228b22', accent: '#ffd700' }
             },
             {
                 name: 'Summer',
@@ -922,13 +957,63 @@
                 name: 'Forest',
                 id: 'forest',
                 colors: { primary: '#2d5016', secondary: '#3d7e3d', accent: '#90ee90' }
-            },
-            {
-                name: 'Thanksgiving',
-                id: 'thanksgiving',
-                colors: { primary: '#d2691e', secondary: '#ff8c00', accent: '#8b4513' }
             }
         ];
+
+        // Get current holiday theme
+        function getHolidayTheme() {
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+
+            // New Year (Dec 31 - Jan 31)
+            if (month === 12 && date === 31) return 'newyear';
+            if (month === 1) return 'newyear';
+
+            // Valentine's Day (Feb 1-28/29)
+            if (month === 2) return 'valentine';
+
+            // St. Patrick's Day (Mar 1-31)
+            if (month === 3) return 'stpatricks';
+
+            // Easter (Apr 1-30)
+            if (month === 4) return 'easter';
+
+            // Memorial Day (May 1-31)
+            if (month === 5) return 'memorialday';
+
+            // Summer (Jun 1 - Aug 31)
+            if (month >= 6 && month <= 8) return 'summer';
+
+            // 4th of July (Jul 1-31)
+            if (month === 7) return 'july4th';
+
+            // Labor Day (Sep 1-30)
+            if (month === 9) return 'laborday';
+
+            // Halloween (Oct 1-31)
+            if (month === 10) return 'halloween';
+
+            // Veterans Day & Thanksgiving (Nov 1-30)
+            if (month === 11) {
+                // Check if it's closer to Thanksgiving (last Thursday)
+                const thursdays = [];
+                for (let d = 1; d <= 30; d++) {
+                    const testDate = new Date(now.getFullYear(), 10, d);
+                    if (testDate.getDay() === 4) thursdays.push(d);
+                }
+                const thanksgivingDate = thursdays[3];
+                // If we're in the week of Thanksgiving or after, show Thanksgiving
+                if (thanksgivingDate && date >= thanksgivingDate - 7) return 'thanksgiving';
+                // Otherwise show Veterans Day (Nov 11)
+                return 'veteransday';
+            }
+
+            // Christmas (Dec 1-31)
+            if (month === 12) return 'christmas';
+
+            return null;
+        }
 
         function switchTab(tabName) {
             // Hide all tabs
@@ -954,13 +1039,23 @@
             const grid = document.getElementById('themeGrid');
             
             let currentTheme = 'default';
-            try {
-                const response = await fetch(`${API_URL}/settings`);
-                const settings = await response.json();
-                currentTheme = settings.theme || 'default';
-            } catch (error) {
-                console.log('Could not fetch theme from server:', error);
-                currentTheme = localStorage.getItem('storeTheme') || 'default';
+            let isHolidayActive = false;
+            
+            // Check for automatic holiday theme
+            const holidayTheme = getHolidayTheme();
+            if (holidayTheme) {
+                currentTheme = holidayTheme;
+                isHolidayActive = true;
+            } else {
+                // If not a holiday, get saved theme
+                try {
+                    const response = await fetch(`${API_URL}/settings`);
+                    const settings = await response.json();
+                    currentTheme = settings.theme || 'default';
+                } catch (error) {
+                    console.log('Could not fetch theme from server:', error);
+                    currentTheme = localStorage.getItem('storeTheme') || 'default';
+                }
             }
             
             grid.innerHTML = themes.map(theme => `
@@ -1024,6 +1119,116 @@
             };
 
             switch(themeId) {
+                case 'newyear':
+                    // Confetti and party emojis
+                    for (let i = 0; i < 25; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 3;
+                        const duration = 3 + Math.random() * 2;
+                        const emoji = ['🎉', '🎊', '✨', '🥳'][Math.floor(Math.random() * 4)];
+                        createShape(`confetti-${i}`, `
+                            font-size: 2rem;
+                            top: -30px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: snowfall ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('newyear');
+                    break;
+
+                case 'stpatricks':
+                    // Lucky coins and clovers
+                    createShape('coin-1', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 15%;
+                        animation: float 6s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🪙';
+                    
+                    createShape('clover', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🍀';
+                    showThemeMessage('stpatricks');
+                    break;
+
+                case 'memorialday':
+                    // Flags
+                    createShape('flag-1', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 15%;
+                        animation: float 6s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🇺🇸';
+                    
+                    createShape('flag-2', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🇺🇸';
+                    showThemeMessage('memorialday');
+                    break;
+
+                case 'july4th':
+                    // Fireworks
+                    for (let i = 0; i < 20; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 3;
+                        const duration = 3 + Math.random() * 2;
+                        const emoji = ['🎆', '✨', '⭐'][Math.floor(Math.random() * 3)];
+                        createShape(`firework-${i}`, `
+                            font-size: 2rem;
+                            top: -30px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: snowfall ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('july4th');
+                    break;
+
+                case 'laborday':
+                    // Work and celebration emojis
+                    createShape('briefcase', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 15%;
+                        animation: float 6s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '💼';
+                    
+                    createShape('celebration', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🎉';
+                    showThemeMessage('laborday');
+                    break;
+
+                case 'veteransday':
+                    // Medals and flags
+                    createShape('medal', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 15%;
+                        animation: spin 6s linear infinite;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🎖️';
+                    
+                    createShape('vets-flag', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🇺🇸';
+                    showThemeMessage('veteransday');
+                    break;
+
                 case 'christmas':
                     // Falling snowflakes and emojis
                     for (let i = 0; i < 25; i++) {
@@ -1198,11 +1403,17 @@
 
         function showThemeMessage(themeId) {
             const messages = {
-                christmas: { emoji: '🎅', text: 'Merry Christmas!', subtext: 'Ho ho ho! Happy Holidays!' },
-                halloween: { emoji: '👻', text: 'Spooky Season!', subtext: 'If you dare to manage...' },
-                thanksgiving: { emoji: '🦃', text: 'Happy Thanksgiving!', subtext: 'Grateful for your work!' },
-                easter: { emoji: '🐰', text: 'Happy Easter!', subtext: 'Hop into management!' },
+                newyear: { emoji: '🎉', text: 'Happy New Year!', subtext: 'New year, new management goals!' },
                 valentine: { emoji: '💕', text: 'Love is in the Air!', subtext: 'Share the love!' },
+                stpatricks: { emoji: '🍀', text: "Happy St. Patrick's Day!", subtext: 'Get lucky with your tasks!' },
+                easter: { emoji: '🐰', text: 'Happy Easter!', subtext: 'Hop into management!' },
+                memorialday: { emoji: '🇺🇸', text: 'Happy Memorial Day!', subtext: 'Honoring our heroes!' },
+                july4th: { emoji: '🎆', text: 'Happy 4th of July!', subtext: 'Independence day celebrations!' },
+                laborday: { emoji: '💼', text: 'Happy Labor Day!', subtext: 'You earned this break!' },
+                halloween: { emoji: '👻', text: 'Spooky Season!', subtext: 'If you dare to manage...' },
+                veteransday: { emoji: '🎖️', text: 'Happy Veterans Day!', subtext: 'Honoring our veterans!' },
+                thanksgiving: { emoji: '🦃', text: 'Happy Thanksgiving!', subtext: 'Grateful for your work!' },
+                christmas: { emoji: '🎅', text: 'Merry Christmas!', subtext: 'Ho ho ho! Happy Holidays!' },
                 summer: { emoji: '☀️', text: 'Summer Vibes!', subtext: 'Keep it cool!' },
                 cyberpunk: { emoji: '🤖', text: 'Welcome to the Future!', subtext: 'Neon management awaits...' },
                 forest: { emoji: '🌲', text: 'Nature Calls!', subtext: 'Manage sustainably!' }
