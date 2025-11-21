@@ -59,6 +59,88 @@
             50% { transform: translateY(50px); }
         }
 
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                transform: translateX(-100%) scale(0.5);
+                opacity: 0;
+            }
+            60% {
+                transform: translateX(10px) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .theme-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 30, 0.95);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 200;
+            animation: slideInBounce 0.6s ease-out;
+            box-shadow: 0 0 50px var(--primary-color), inset 0 0 30px rgba(255,255,255,0.1);
+            max-width: 500px;
+        }
+
+        .theme-message-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .theme-message-text {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .theme-message-subtext {
+            font-size: 0.9rem;
+            color: #a0a0b0;
+        }
+
         nav {
             position: relative;
             z-index: 10;
@@ -74,7 +156,7 @@
         .nav-logo {
             font-size: 1.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -128,7 +210,7 @@
         .title {
             font-size: 2.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #8338ec, #ff006e);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -162,7 +244,7 @@
 
         .panel-title {
             font-size: 1.5rem;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -223,14 +305,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 10px 25px var(--primary-color);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 15px 35px var(--primary-color);
         }
 
         .btn-danger {
@@ -257,7 +339,7 @@
 
         .products-list-title {
             font-size: 1.5rem;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -347,7 +429,7 @@
         .stat-value {
             font-size: 1.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -357,6 +439,241 @@
             font-size: 0.8rem;
             color: #a0a0b0;
             margin-top: 5px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #a0a0b0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .tab-btn:hover {
+            color: #00d4ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Order Styles */
+        .order-item {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .order-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-processing {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .status-shipped {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .status-cancelled {
+            background: rgba(255, 0, 110, 0.2);
+            color: #ff006e;
+        }
+
+        .order-details {
+            color: #a0a0b0;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .order-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .order-items {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .order-item-line {
+            color: #a0a0b0;
+            margin-bottom: 5px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .status-select {
+            padding: 8px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .order-action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .print-label-btn {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .print-label-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .delete-order-btn {
+            background: rgba(255, 0, 110, 0.2);
+            color: #ff006e;
+        }
+
+        .delete-order-btn:hover {
+            background: rgba(255, 0, 110, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease-out;
+            z-index: 200;
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0a0b0;
+        }
+
+        /* Theme Colors */
+        :root {
+            --primary-color: #00d4ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --bg-dark: #0f0f1e;
+            --bg-darker: #1a0f2e;
+            --primary-dark: rgba(0, 212, 255, 0.3);
+            --primary-light: rgba(0, 212, 255, 0.1);
+            --primary-lighter: rgba(0, 212, 255, 0.05);
+            --secondary-dark: rgba(131, 56, 236, 0.3);
+            --secondary-light: rgba(131, 56, 236, 0.1);
+            --secondary-lighter: rgba(131, 56, 236, 0.05);
+            --accent-dark: rgba(255, 0, 110, 0.3);
+            --accent-light: rgba(255, 0, 110, 0.1);
+        }
+
+        /* Theme Grid */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .theme-option {
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .theme-option:hover {
+            border-color: rgba(0, 212, 255, 0.8);
+            transform: translateY(-5px);
+        }
+
+        .theme-option.active {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
         }
 
         /* Animations */
@@ -516,52 +833,745 @@
             </div>
         </div>
 
-        <div class="products-list">
-            <h2 class="products-list-title">Manage Products</h2>
-            <div id="productsList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📦</div>
-                    <p>No products added yet. Create your first product using the form above.</p>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products')">📦 Products</button>
+            <button class="tab-btn" onclick="switchTab('orders')">📋 Orders</button>
+            <button class="tab-btn" onclick="switchTab('themes')">🎨 Themes</button>
+        </div>
+
+        <div id="productsTab" class="tab-content active">
+            <div class="products-list">
+                <h2 class="products-list-title">Manage Products</h2>
+                <div id="productsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No products added yet. Create your first product using the form above.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ordersTab" class="tab-content">
+            <div class="products-list">
+                <h2 class="products-list-title">Order Management</h2>
+                <div id="ordersList">
+                    <div class="empty-orders">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📋</div>
+                        <p>No orders yet. Orders will appear here as customers place them.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="themesTab" class="tab-content">
+            <div class="products-list">
+                <h2 class="products-list-title">Theme Selector</h2>
+                <p style="color: #a0a0b0; margin-bottom: 20px;">Choose a theme for your store. Perfect for holidays and special occasions!</p>
+                <div class="theme-grid" id="themeGrid">
+                    <!-- Themes will be generated here -->
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Notification -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
     <script>
-        // Load products on page load
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('layerMonsterProducts')) || [];
-            const list = document.getElementById('productsList');
+        const API_URL = 'https://website-server-vpfj.onrender.com/api';
+        let orders = [];
 
-            if (products.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📦</div>
-                        <p>No products added yet. Create your first product using the form above.</p>
-                    </div>
-                `;
-                updateStats();
-                return;
+        // Theme definitions
+        const themes = [
+            {
+                name: 'Default',
+                id: 'default',
+                colors: { primary: '#00d4ff', secondary: '#8338ec', accent: '#ff006e' }
+            },
+            {
+                name: 'Christmas',
+                id: 'christmas',
+                colors: { primary: '#dc143c', secondary: '#228b22', accent: '#ffd700' }
+            },
+            {
+                name: 'Halloween',
+                id: 'halloween',
+                colors: { primary: '#ff6600', secondary: '#000000', accent: '#ff00ff' }
+            },
+            {
+                name: 'Easter',
+                id: 'easter',
+                colors: { primary: '#ff69b4', secondary: '#00ced1', accent: '#ffd700' }
+            },
+            {
+                name: 'Valentine',
+                id: 'valentine',
+                colors: { primary: '#ff1493', secondary: '#ff69b4', accent: '#ffd700' }
+            },
+            {
+                name: 'Summer',
+                id: 'summer',
+                colors: { primary: '#00bfff', secondary: '#32cd32', accent: '#ffd700' }
+            },
+            {
+                name: 'Cyberpunk',
+                id: 'cyberpunk',
+                colors: { primary: '#ff10f0', secondary: '#00ffff', accent: '#ffff00' }
+            },
+            {
+                name: 'Forest',
+                id: 'forest',
+                colors: { primary: '#2d5016', secondary: '#3d7e3d', accent: '#90ee90' }
+            },
+            {
+                name: 'Thanksgiving',
+                id: 'thanksgiving',
+                colors: { primary: '#d2691e', secondary: '#ff8c00', accent: '#8b4513' }
             }
+        ];
 
-            list.innerHTML = products.map((product, index) => `
-                <div class="product-item" style="animation-delay: ${index * 0.1}s;">
-                    <div class="product-info">
-                        <div class="product-name">${product.emoji} ${product.name}</div>
-                        <div class="product-details">${product.description}</div>
-                        <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="btn btn-danger" onclick="deleteProduct(${index})">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-
-            updateStats();
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('productsTab').classList.remove('active');
+            document.getElementById('ordersTab').classList.remove('active');
+            document.getElementById('themesTab').classList.remove('active');
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'orders') {
+                loadOrders();
+            } else if (tabName === 'themes') {
+                loadThemes();
+            }
         }
 
-        function updateStats() {
-            const products = JSON.parse(localStorage.getItem('layerMonsterProducts')) || [];
+        async function loadThemes() {
+            const grid = document.getElementById('themeGrid');
+            
+            let currentTheme = 'default';
+            try {
+                const response = await fetch(`${API_URL}/settings`);
+                const settings = await response.json();
+                currentTheme = settings.theme || 'default';
+            } catch (error) {
+                console.log('Could not fetch theme from server:', error);
+                currentTheme = localStorage.getItem('storeTheme') || 'default';
+            }
+            
+            grid.innerHTML = themes.map(theme => `
+                <div class="theme-option ${currentTheme === theme.id ? 'active' : ''}" onclick="applyTheme('${theme.id}', this)">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary})"></div>
+                    <div class="theme-name">${theme.name}</div>
+                </div>
+            `).join('');
+        }
+
+        async function applyTheme(themeId, element) {
+            const theme = themes.find(t => t.id === themeId);
+            if (!theme) return;
+            
+            try {
+                // Save to database
+                const response = await fetch(`${API_URL}/settings/theme`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ theme: themeId })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to save theme to database');
+                }
+                
+                // Also save to localStorage as fallback
+                localStorage.setItem('storeTheme', themeId);
+                
+                // Update CSS variables
+                document.documentElement.style.setProperty('--primary-color', theme.colors.primary);
+                document.documentElement.style.setProperty('--secondary-color', theme.colors.secondary);
+                document.documentElement.style.setProperty('--accent-color', theme.colors.accent);
+                
+                // Apply theme background animations
+                applyThemeBackground(themeId, theme.colors);
+                
+                // Update active state
+                document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+                
+                showNotification(`Theme changed to ${theme.name}`);
+            } catch (error) {
+                console.error('Error applying theme:', error);
+                showNotification('Failed to save theme', 'error');
+            }
+        }
+
+        function applyThemeBackground(themeId, colors) {
+            const bgShapes = document.querySelector('.bg-shapes');
+            if (!bgShapes) return;
+            
+            // Clear existing animations
+            bgShapes.innerHTML = '';
+            
+            const createShape = (className, style) => {
+                const shape = document.createElement('div');
+                shape.className = `shape ${className}`;
+                shape.setAttribute('style', style);
+                bgShapes.appendChild(shape);
+            };
+
+            switch(themeId) {
+                case 'christmas':
+                    // Falling snowflakes and emojis
+                    for (let i = 0; i < 25; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 5;
+                        const duration = 4 + Math.random() * 3;
+                        const emoji = ['❄️', '⛄', '🎄'][Math.floor(Math.random() * 3)];
+                        createShape(`snowflake-${i}`, `
+                            font-size: 2rem;
+                            top: -30px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: snowfall ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('christmas');
+                    break;
+
+                case 'halloween':
+                    // Floating pumpkins and ghosts with emojis
+                    createShape('ghost-1', `
+                        font-size: 3.5rem;
+                        top: 10%; left: 15%;
+                        animation: float 8s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '👻';
+                    
+                    createShape('pumpkin-1', `
+                        font-size: 3.5rem;
+                        top: 40%; right: 10%;
+                        animation: float 10s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🎃';
+                    showThemeMessage('halloween');
+                    break;
+
+                case 'thanksgiving':
+                    // Falling leaves and turkey emojis
+                    for (let i = 0; i < 20; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 4;
+                        const duration = 5 + Math.random() * 3;
+                        const emoji = ['🍂', '🍁', '🦃', '🌽'][Math.floor(Math.random() * 4)];
+                        createShape(`leaf-${i}`, `
+                            font-size: 2.5rem;
+                            top: -40px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: falling ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('thanksgiving');
+                    break;
+
+                case 'easter':
+                    // Bouncing eggs and bunnies
+                    createShape('egg-1', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 10%;
+                        animation: bounce 3s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🥚';
+                    
+                    createShape('bunny-1', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: bounce 4s infinite ease-in-out;
+                        animation-delay: 0.5s;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🐰';
+                    showThemeMessage('easter');
+                    break;
+
+                case 'valentine':
+                    // Floating hearts and cupids
+                    createShape('heart-1', `
+                        font-size: 3.5rem;
+                        top: 15%; left: 20%;
+                        animation: float 5s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '💕';
+                    
+                    createShape('cupid', `
+                        font-size: 3.5rem;
+                        top: 45%; right: 20%;
+                        animation: float 6s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '💘';
+                    showThemeMessage('valentine');
+                    break;
+
+                case 'summer':
+                    // Floating sun and ice cream
+                    createShape('sun', `
+                        font-size: 4rem;
+                        top: 10%; right: 5%;
+                        opacity: 0.8;
+                        animation: float 6s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '☀️';
+                    
+                    createShape('icecream', `
+                        font-size: 3.5rem;
+                        top: 30%; left: 10%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🍦';
+                    showThemeMessage('summer');
+                    break;
+
+                case 'cyberpunk':
+                    // Spinning neon shapes with emojis
+                    createShape('cyber-1', `
+                        font-size: 3.5rem;
+                        top: 10%; left: 5%;
+                        animation: spin 10s linear infinite;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '⚡';
+                    
+                    createShape('cyber-2', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 10%;
+                        animation: spin 8s linear infinite reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🤖';
+                    showThemeMessage('cyberpunk');
+                    break;
+
+                case 'forest':
+                    // Gentle floating particles with nature emojis
+                    createShape('leaf', `
+                        font-size: 3.5rem;
+                        top: 25%; left: 15%;
+                        animation: float 7s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🌿';
+                    
+                    createShape('tree', `
+                        font-size: 3.5rem;
+                        top: 60%; right: 20%;
+                        animation: float 9s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🌲';
+                    showThemeMessage('forest');
+                    break;
+
+                default:
+                    // Default theme - original shapes
+                    createShape('shape-1', `
+                        width: 400px; height: 400px;
+                        background: radial-gradient(circle, ${colors.primary}, transparent);
+                        top: -100px; left: -100px;
+                        animation: float 20s infinite ease-in-out;
+                    `);
+                    createShape('shape-2', `
+                        width: 300px; height: 300px;
+                        background: radial-gradient(circle, ${colors.accent}, transparent);
+                        bottom: -50px; right: -50px;
+                        animation: float 25s infinite ease-in-out reverse;
+                    `);
+                    createShape('shape-3', `
+                        width: 250px; height: 250px;
+                        background: radial-gradient(circle, ${colors.secondary}, transparent);
+                        top: 50%; right: 10%;
+                        animation: float 30s infinite ease-in-out;
+                    `);
+                    break;
+            }
+        }
+
+        function showThemeMessage(themeId) {
+            const messages = {
+                christmas: { emoji: '🎅', text: 'Merry Christmas!', subtext: 'Ho ho ho! Happy Holidays!' },
+                halloween: { emoji: '👻', text: 'Spooky Season!', subtext: 'If you dare to manage...' },
+                thanksgiving: { emoji: '🦃', text: 'Happy Thanksgiving!', subtext: 'Grateful for your work!' },
+                easter: { emoji: '🐰', text: 'Happy Easter!', subtext: 'Hop into management!' },
+                valentine: { emoji: '💕', text: 'Love is in the Air!', subtext: 'Share the love!' },
+                summer: { emoji: '☀️', text: 'Summer Vibes!', subtext: 'Keep it cool!' },
+                cyberpunk: { emoji: '🤖', text: 'Welcome to the Future!', subtext: 'Neon management awaits...' },
+                forest: { emoji: '🌲', text: 'Nature Calls!', subtext: 'Manage sustainably!' }
+            };
+
+            const message = messages[themeId] || messages.default;
+            
+            // Remove existing message if any
+            const existing = document.querySelector('.theme-message');
+            if (existing) existing.remove();
+            
+            // Create message element
+            const msgEl = document.createElement('div');
+            msgEl.className = 'theme-message';
+            msgEl.innerHTML = `
+                <div class="theme-message-emoji">${message.emoji}</div>
+                <div class="theme-message-text">${message.text}</div>
+                <div class="theme-message-subtext">${message.subtext}</div>
+            `;
+            document.body.appendChild(msgEl);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                msgEl.style.opacity = '0';
+                msgEl.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                msgEl.style.transition = 'all 0.4s ease-out';
+                setTimeout(() => msgEl.remove(), 400);
+            }, 3000);
+        }
+
+        function showNotification(message, type = 'success') {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.display = 'block';
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 4000);
+        }
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/orders`);
+                orders = await response.json();
+                const list = document.getElementById('ordersList');
+
+                if (orders.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-orders">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">📋</div>
+                            <p>No orders yet. Orders will appear here as customers place them.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = orders.map(order => `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #${order._id.toString().substring(0, 8).toUpperCase()}</div>
+                                <div style="font-size: 0.85rem; color: #a0a0b0; margin-top: 3px;">${new Date(order.createdAt).toLocaleDateString()}</div>
+                            </div>
+                            <span class="order-status status-${order.status}">${order.status.toUpperCase()}</span>
+                        </div>
+
+                        <div class="order-details">
+                            <div class="order-detail-row">
+                                <span>Customer: <strong>${order.customerName}</strong></span>
+                                <span>${order.email}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span>Address: ${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}</span>
+                            </div>
+                        </div>
+
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item-line">• ${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</div>
+                            `).join('')}
+                        </div>
+
+                        <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 15px; font-size: 0.9rem; color: #a0a0b0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Subtotal:</span>
+                                <span>$${(order.subtotal || 0).toFixed(2)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Shipping:</span>
+                                <span>${(order.shipping || 0) === 0 ? 'Free' : '$' + (order.shipping || 0).toFixed(2)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(0, 212, 255, 0.1); padding-top: 8px; margin-top: 8px; color: #00d4ff; font-weight: 700;">
+                                <span>Total:</span>
+                                <span>$${(order.total || 0).toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <div class="order-actions">
+                            <select class="status-select" onchange="updateOrderStatus('${order._id}', this.value)">
+                                <option value="">Change Status</option>
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                            <button class="order-action-btn print-label-btn" onclick="printLabel('${order._id}', '${order.customerName}')">🏷️ Print Label</button>
+                            <button class="order-action-btn delete-order-btn" onclick="deleteOrder('${order._id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="empty-orders">
+                        <p>Error loading orders. Please check your connection.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            if (!status) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    showNotification(`Order status updated to ${status}`);
+                    loadOrders();
+                } else {
+                    alert('Error updating order status');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function printLabel(orderId, customerName) {
+            const order = orders.find(o => o._id === orderId);
+            if (!order) return;
+
+            const labelHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Shipping Label - Order ${orderId.toString().substring(0, 8).toUpperCase()}</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+                        .label-container { width: 600px; margin: 0 auto; }
+                        .label { 
+                            background: white; 
+                            border: 3px solid #000; 
+                            padding: 30px; 
+                            margin-bottom: 20px;
+                            page-break-after: always;
+                        }
+                        .header { 
+                            text-align: center; 
+                            border-bottom: 2px solid #000; 
+                            padding-bottom: 15px; 
+                            margin-bottom: 20px;
+                        }
+                        .header h1 { font-size: 24px; font-weight: bold; }
+                        .header p { font-size: 12px; color: #666; }
+                        .section { margin-bottom: 20px; }
+                        .section-title { 
+                            font-size: 12px; 
+                            font-weight: bold; 
+                            color: #333; 
+                            margin-bottom: 8px;
+                            text-transform: uppercase;
+                        }
+                        .recipient { 
+                            border: 2px dashed #000; 
+                            padding: 15px; 
+                            font-size: 16px;
+                            line-height: 1.6;
+                            margin-bottom: 20px;
+                        }
+                        .recipient-name { font-weight: bold; font-size: 18px; }
+                        .recipient-address { font-size: 14px; }
+                        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                        .info-block { font-size: 13px; }
+                        .info-label { font-weight: bold; color: #333; }
+                        .info-value { color: #666; word-break: break-all; }
+                        .items-list { 
+                            background: #f9f9f9; 
+                            border: 1px solid #ddd; 
+                            padding: 10px; 
+                            margin: 15px 0;
+                            font-size: 12px;
+                        }
+                        .item-line { margin: 5px 0; }
+                        .barcode-area { 
+                            text-align: center; 
+                            margin-top: 20px; 
+                            padding-top: 20px; 
+                            border-top: 2px solid #000;
+                        }
+                        .order-id-large { 
+                            font-size: 20px; 
+                            font-weight: bold; 
+                            font-family: monospace;
+                            letter-spacing: 2px;
+                            margin: 10px 0;
+                        }
+                        .footer { 
+                            text-align: center; 
+                            font-size: 11px; 
+                            color: #999; 
+                            margin-top: 15px;
+                        }
+                        @media print {
+                            body { background: white; }
+                            .label { page-break-inside: avoid; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="label-container">
+                        <div class="label">
+                            <div class="header">
+                                <h1>SHIPPING LABEL</h1>
+                                <p>Layer Monster - 3D Prints Store</p>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">Ship To:</div>
+                                <div class="recipient">
+                                    <div class="recipient-name">${order.customerName}</div>
+                                    <div class="recipient-address">${order.shippingAddress.street}</div>
+                                    <div class="recipient-address">${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}</div>
+                                    <div class="recipient-address">${order.shippingAddress.country}</div>
+                                </div>
+                            </div>
+
+                            <div class="two-column">
+                                <div class="info-block">
+                                    <div class="section-title">Order Details</div>
+                                    <div style="margin-bottom: 8px;">
+                                        <div class="info-label">Order ID:</div>
+                                        <div class="info-value">${orderId.toString().substring(0, 16)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="info-label">Date:</div>
+                                        <div class="info-value">${new Date(order.createdAt).toLocaleDateString()}</div>
+                                    </div>
+                                </div>
+                                <div class="info-block">
+                                    <div class="section-title">Contact</div>
+                                    <div style="margin-bottom: 8px;">
+                                        <div class="info-label">Email:</div>
+                                        <div class="info-value">${order.email}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">Items</div>
+                                <div class="items-list">
+                                    ${order.items.map((item, idx) => `
+                                        <div class="item-line">${idx + 1}. ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}</div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="two-column">
+                                <div>
+                                    <div class="info-label">Subtotal:</div>
+                                    <div class="info-value">$${(order.subtotal || 0).toFixed(2)}</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">Shipping:</div>
+                                    <div class="info-value">${(order.shipping || 0) === 0 ? 'FREE' : '$' + (order.shipping || 0).toFixed(2)}</div>
+                                </div>
+                            </div>
+
+                            <div class="barcode-area">
+                                <div style="font-size: 12px; font-weight: bold; color: #333;">ORDER ID</div>
+                                <div class="order-id-large">${orderId.toString().substring(0, 8).toUpperCase()}</div>
+                                <div style="border-top: 2px solid #000; padding-top: 10px; margin-top: 10px;">
+                                    <div style="font-size: 18px; font-weight: bold; color: #000;">TOTAL: $${(order.total || 0).toFixed(2)}</div>
+                                </div>
+                            </div>
+
+                            <div class="footer">
+                                <p>Print and affix label to package. Ensure address is clearly visible.</p>
+                                <p style="margin-top: 5px;">Printed: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '', 'width=800,height=1000');
+            printWindow.document.write(labelHTML);
+            printWindow.document.close();
+            setTimeout(() => printWindow.print(), 250);
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showNotification('Order deleted successfully');
+                    loadOrders();
+                } else {
+                    alert('Error deleting order');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                const list = document.getElementById('productsList');
+
+                if (products.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <p>No products added yet. Create your first product using the form above.</p>
+                        </div>
+                    `;
+                    updateStats(products);
+                    return;
+                }
+
+                list.innerHTML = products.map((product, index) => `
+                    <div class="product-item" style="animation-delay: ${index * 0.1}s;">
+                        <div class="product-info">
+                            <div class="product-name">${product.emoji} ${product.name}</div>
+                            <div class="product-details">${product.description}</div>
+                            <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-danger" onclick="deleteProduct('${product._id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                updateStats(products);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Unable to connect to server. Make sure backend is running on http://localhost:5000</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(products) {
             const count = products.length;
             const total = products.reduce((sum, p) => sum + parseFloat(p.price), 0);
 
@@ -569,12 +1579,22 @@
             document.getElementById('totalValue').textContent = `$${total.toFixed(2)}`;
         }
 
-        function deleteProduct(index) {
+        async function deleteProduct(id) {
             if (confirm('Are you sure you want to delete this product?')) {
-                const products = JSON.parse(localStorage.getItem('layerMonsterProducts')) || [];
-                products.splice(index, 1);
-                localStorage.setItem('layerMonsterProducts', JSON.stringify(products));
-                loadProducts();
+                try {
+                    const response = await fetch(`${API_URL}/products/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Product deleted successfully!');
+                        loadProducts();
+                    } else {
+                        alert('Error deleting product');
+                    }
+                } catch (error) {
+                    alert('Error deleting product: ' + error.message);
+                }
             }
         }
 
@@ -584,37 +1604,113 @@
                 storeSubtitle: document.getElementById('storeSubtitle').value,
                 storeDesc: document.getElementById('storeDesc').value
             };
-            localStorage.setItem('layerMonsterSettings', JSON.stringify(settings));
             alert('Settings saved successfully!');
         }
 
         // Form submission
-        document.getElementById('productForm').addEventListener('submit', function(e) {
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const newProduct = {
                 name: document.getElementById('productName').value,
                 description: document.getElementById('productDesc').value,
-                price: document.getElementById('productPrice').value,
+                price: parseFloat(document.getElementById('productPrice').value),
                 emoji: document.getElementById('productEmoji').value || '🎨'
             };
 
-            const products = JSON.parse(localStorage.getItem('layerMonsterProducts')) || [];
-            products.push(newProduct);
-            localStorage.setItem('layerMonsterProducts', JSON.stringify(products));
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newProduct)
+                });
 
-            // Reset form
-            this.reset();
-            document.getElementById('productEmoji').value = '🎨';
+                if (response.ok) {
+                    // Reset form
+                    this.reset();
+                    document.getElementById('productEmoji').value = '🎨';
 
-            // Reload products
-            loadProducts();
+                    // Reload products
+                    loadProducts();
 
-            alert('Product added successfully!');
+                    alert('Product added successfully!');
+                } else {
+                    alert('Error adding product');
+                }
+            } catch (error) {
+                alert('Error adding product: ' + error.message);
+            }
         });
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const themeColors = {
+                default: { primary: '#00d4ff', secondary: '#8338ec', accent: '#ff006e' },
+                christmas: { primary: '#dc143c', secondary: '#228b22', accent: '#ffd700' },
+                halloween: { primary: '#ff6600', secondary: '#000000', accent: '#ff00ff' },
+                easter: { primary: '#ff69b4', secondary: '#00ced1', accent: '#ffd700' },
+                valentine: { primary: '#ff1493', secondary: '#ff69b4', accent: '#ffd700' },
+                summer: { primary: '#00bfff', secondary: '#32cd32', accent: '#ffd700' },
+                cyberpunk: { primary: '#ff10f0', secondary: '#00ffff', accent: '#ffff00' },
+                forest: { primary: '#2d5016', secondary: '#3d7e3d', accent: '#90ee90' }
+            };
+
+            const currentTheme = localStorage.getItem('storeTheme') || 'default';
+            const colors = themeColors[currentTheme] || themeColors.default;
+            
+            // Helper to convert hex to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+            }
+
+            const primaryRgb = hexToRgb(colors.primary);
+            const secondaryRgb = hexToRgb(colors.secondary);
+            const accentRgb = hexToRgb(colors.accent);
+            
+            document.documentElement.style.setProperty('--primary-color', colors.primary);
+            document.documentElement.style.setProperty('--secondary-color', colors.secondary);
+            document.documentElement.style.setProperty('--accent-color', colors.accent);
+            document.documentElement.style.setProperty('--primary-dark', `rgba(${primaryRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--primary-light', `rgba(${primaryRgb}, 0.1)`);
+            document.documentElement.style.setProperty('--primary-lighter', `rgba(${primaryRgb}, 0.05)`);
+            document.documentElement.style.setProperty('--secondary-dark', `rgba(${secondaryRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--secondary-light', `rgba(${secondaryRgb}, 0.1)`);
+            document.documentElement.style.setProperty('--secondary-lighter', `rgba(${secondaryRgb}, 0.05)`);
+            document.documentElement.style.setProperty('--accent-dark', `rgba(${accentRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--accent-light', `rgba(${accentRgb}, 0.1)`);
+        }
+
+        loadTheme();
 
         // Load products on page load
         loadProducts();
-    </script>
-</body>
-</html>
+
+        // Check for new orders every 5 seconds
+        let lastOrderCount = 0;
+        setInterval(async () => {
+            try {
+                const response = await fetch(`${API_URL}/orders`);
+                const allOrders = await response.json();
+                
+                // Notify if new order received
+                if (allOrders.length > lastOrderCount) {
+                    const newOrderCount = allOrders.length - lastOrderCount;
+                    showNotification(`🎉 New order received! (${newOrderCount} new)`);
+                    lastOrderCount = allOrders.length;
+                    
+                    // If orders tab is active, reload it
+                    if (document.getElementById('ordersTab').classList.contains('active')) {
+                        loadOrders();
+                    }
+                }
+                lastOrderCount = allOrders.length;
+            } catch (error) {
+                console.error('Error checking for new orders:', error);
+            }
+        }, 5000);
+        </script>
+        </body>
+        </html>
