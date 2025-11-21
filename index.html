@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Layer Monster - 3D Prints Store</title>
     <style>
+        :root {
+            --primary-color: #00d4ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --primary-dark: rgba(0, 212, 255, 0.3);
+            --primary-light: rgba(0, 212, 255, 0.1);
+            --primary-lighter: rgba(0, 212, 255, 0.05);
+            --secondary-dark: rgba(131, 56, 236, 0.3);
+            --secondary-light: rgba(131, 56, 236, 0.1);
+            --secondary-lighter: rgba(131, 56, 236, 0.05);
+            --accent-dark: rgba(255, 0, 110, 0.3);
+            --accent-light: rgba(255, 0, 110, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -68,6 +82,88 @@
             50% { transform: translateY(50px); }
         }
 
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                transform: translateX(-100%) scale(0.5);
+                opacity: 0;
+            }
+            60% {
+                transform: translateX(10px) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .theme-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 30, 0.95);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 200;
+            animation: slideInBounce 0.6s ease-out;
+            box-shadow: 0 0 50px var(--primary-color), inset 0 0 30px rgba(255,255,255,0.1);
+            max-width: 500px;
+        }
+
+        .theme-message-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .theme-message-text {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .theme-message-subtext {
+            font-size: 0.9rem;
+            color: #a0a0b0;
+        }
+
         nav {
             position: relative;
             z-index: 10;
@@ -77,13 +173,13 @@
             padding: 20px 40px;
             background: rgba(15, 15, 30, 0.8);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            border-bottom: 1px solid var(--primary-dark);
         }
 
         .nav-logo {
             font-size: 1.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -104,9 +200,9 @@
             color: #00d4ff;
         }
 
-        .admin-btn {
+        .admin-btn, .cart-btn {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
             border-radius: 25px;
@@ -115,9 +211,386 @@
             transition: all 0.3s ease;
         }
 
-        .admin-btn:hover {
+        .admin-btn:hover, .cart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 10px 25px var(--primary-color);
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff006e;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .cart-modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .cart-panel {
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0f2e 100%);
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            border: 1px solid var(--primary-dark);
+            border-bottom: none;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--primary-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: #a0a0b0;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .cart-close:hover {
+            color: #fff;
+        }
+
+        .cart-progress {
+            padding: 20px;
+            border-bottom: 1px solid var(--primary-dark);
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: #a0a0b0;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--primary-lighter);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .cart-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            background: var(--primary-lighter);
+            border: 1px solid var(--primary-dark);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #a0a0b0;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .qty-btn {
+            background: var(--primary-lighter);
+            border: 1px solid var(--primary-dark);
+            color: var(--primary-color);
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .qty-display {
+            min-width: 40px;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .remove-btn {
+            background: rgba(255, 0, 110, 0.1);
+            border: none;
+            color: #ff006e;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 0, 110, 0.2);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0a0b0;
+        }
+
+        .cart-footer {
+            border-top: 1px solid var(--primary-dark);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-summary {
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #a0a0b0;
+        }
+
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 1px solid var(--primary-dark);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px var(--primary-color);
+        }
+
+        .checkout-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Checkout Modal */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 101;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkout-modal.active {
+            display: flex;
+        }
+
+        .checkout-form {
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0f2e 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .checkout-form h2 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-form input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-form input:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.8);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .form-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px var(--primary-color);
+        }
+
+        .cancel-btn {
+            background: rgba(255, 0, 110, 0.1);
+            color: #ff006e;
+            border: 1px solid #ff006e;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(255, 0, 110, 0.2);
+        }
+
+        .shipping-info {
+            background: var(--primary-lighter);
+            border: 1px solid var(--primary-dark);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .shipping-cost {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #a0a0b0;
+        }
+
+        .shipping-cost.total {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #00d4ff;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding-top: 10px;
+            margin-top: 10px;
         }
 
         .container {
@@ -138,7 +611,7 @@
             display: inline-block;
             font-size: 3rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #8338ec, #ff006e);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -165,7 +638,7 @@
             font-size: 2.5rem;
             line-height: 1.3;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -189,7 +662,7 @@
 
         .section-title {
             font-size: 2rem;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -204,8 +677,8 @@
         }
 
         .product-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(131, 56, 236, 0.08));
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, var(--primary-lighter), var(--secondary-lighter));
+            border: 1px solid var(--primary-dark);
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -218,21 +691,21 @@
         .product-card:nth-child(4) { animation-delay: 0.4s; }
 
         .product-card:hover {
-            border-color: rgba(0, 212, 255, 0.8);
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(131, 56, 236, 0.15));
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
             transform: translateY(-15px);
-            box-shadow: 0 25px 50px rgba(0, 212, 255, 0.25);
+            box-shadow: 0 25px 50px var(--primary-color);
         }
 
         .product-image {
             width: 100%;
             height: 200px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(131, 56, 236, 0.1));
+            background: linear-gradient(135deg, var(--primary-lighter), var(--secondary-lighter));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 4rem;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            border-bottom: 1px solid var(--primary-dark);
         }
 
         .product-content {
@@ -256,7 +729,7 @@
         .product-price {
             font-size: 1.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #00d4ff, #ff006e);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -266,7 +739,7 @@
         .product-btn {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #00d4ff, #8338ec);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
             border-radius: 8px;
@@ -378,9 +851,108 @@
         <div class="nav-links">
             <a href="#products">Shop</a>
             <a href="#about">About</a>
-            <button class="admin-btn" onclick="window.location.href='admin.html'">Admin Panel</button>
+            <button class="cart-btn" onclick="toggleCart()">
+                🛒 Cart
+                <span class="cart-count" id="cartCount" style="display: none;">0</span>
+            </button>
         </div>
     </nav>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-form">
+            <h2>Shipping Information</h2>
+            <form id="checkoutForm" onsubmit="submitOrder(event)">
+                <div class="form-row">
+                    <input type="text" id="firstName" placeholder="First Name" required>
+                    <input type="text" id="lastName" placeholder="Last Name" required>
+                </div>
+
+                <div class="form-row full">
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+
+                <div class="form-row full">
+                    <input type="text" id="address" placeholder="Street Address" required>
+                </div>
+
+                <div class="form-row">
+                    <input type="text" id="city" placeholder="City" required>
+                    <input type="text" id="state" placeholder="State/Province" required>
+                </div>
+
+                <div class="form-row">
+                    <input type="text" id="zipCode" placeholder="ZIP Code" required>
+                    <input type="text" id="country" placeholder="Country" required>
+                </div>
+
+                <div class="shipping-info">
+                    <div class="shipping-cost">
+                        <span>Subtotal:</span>
+                        <span id="checkoutSubtotal">$0.00</span>
+                    </div>
+                    <div class="shipping-cost">
+                        <span>Shipping:</span>
+                        <span id="checkoutShipping">Free</span>
+                    </div>
+                    <div class="shipping-cost total">
+                        <span>Total:</span>
+                        <span id="checkoutTotal">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">Place Order</button>
+                    <button type="button" class="cancel-btn" onclick="closeCheckout()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal" onclick="if(event.target === this) toggleCart()">
+        <div class="cart-panel">
+            <div class="cart-header">
+                <h2 class="cart-title">Shopping Cart</h2>
+                <button class="cart-close" onclick="toggleCart()">✕</button>
+            </div>
+
+            <div class="cart-progress">
+                <div class="progress-label">
+                    <span>Shipping Progress</span>
+                    <span id="progressText">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="cart-content" id="cartItems">
+                <div class="empty-cart">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🛒</div>
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span id="shippingCost">Free</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn" disabled onclick="checkout()">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <header>
@@ -405,41 +977,520 @@
     </div>
 
     <script>
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('layerMonsterProducts')) || [];
-            const grid = document.getElementById('productsGrid');
+        const API_URL = 'http://localhost:5000/api';
+        let cart = [];
+        const SHIPPING_THRESHOLD = 50; // Free shipping over $50
+        const SHIPPING_RATE = 0.15; // 15% of order for shipping
 
-            if (products.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="empty-state-icon">📦</div>
-                        <p>No products available yet. Check back soon or visit the admin panel to add products.</p>
-                    </div>
-                `;
-                return;
+        // Load theme from database or fallback to localStorage
+        async function loadTheme() {
+            const themes = {
+                default: { primary: '#00d4ff', secondary: '#8338ec', accent: '#ff006e' },
+                christmas: { primary: '#dc143c', secondary: '#228b22', accent: '#ffd700' },
+                halloween: { primary: '#ff6600', secondary: '#000000', accent: '#ff00ff' },
+                easter: { primary: '#ff69b4', secondary: '#00ced1', accent: '#ffd700' },
+                valentine: { primary: '#ff1493', secondary: '#ff69b4', accent: '#ffd700' },
+                summer: { primary: '#00bfff', secondary: '#32cd32', accent: '#ffd700' },
+                cyberpunk: { primary: '#ff10f0', secondary: '#00ffff', accent: '#ffff00' },
+                forest: { primary: '#2d5016', secondary: '#3d7e3d', accent: '#90ee90' },
+                thanksgiving: { primary: '#d2691e', secondary: '#ff8c00', accent: '#8b4513' }
+            };
+
+            let currentTheme = 'default';
+            
+            try {
+                const response = await fetch(`${API_URL}/settings`);
+                const settings = await response.json();
+                currentTheme = settings.theme || 'default';
+            } catch (error) {
+                console.log('Could not fetch theme from server, using localStorage:', error);
+                currentTheme = localStorage.getItem('storeTheme') || 'default';
+            }
+            
+            const colors = themes[currentTheme] || themes.default;
+            
+            // Helper to convert hex to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
             }
 
-            grid.innerHTML = products.map((product, index) => `
-                <div class="product-card" style="animation-delay: ${index * 0.1}s;">
-                    <div class="product-image">${product.emoji || '🎨'}</div>
-                    <div class="product-content">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-desc">${product.description}</div>
-                        <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
-                        <button class="product-btn" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
-                    </div>
-                </div>
-            `).join('');
+            const primaryRgb = hexToRgb(colors.primary);
+            const secondaryRgb = hexToRgb(colors.secondary);
+            const accentRgb = hexToRgb(colors.accent);
+            
+            document.documentElement.style.setProperty('--primary-color', colors.primary);
+            document.documentElement.style.setProperty('--secondary-color', colors.secondary);
+            document.documentElement.style.setProperty('--accent-color', colors.accent);
+            document.documentElement.style.setProperty('--primary-dark', `rgba(${primaryRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--primary-light', `rgba(${primaryRgb}, 0.1)`);
+            document.documentElement.style.setProperty('--primary-lighter', `rgba(${primaryRgb}, 0.05)`);
+            document.documentElement.style.setProperty('--secondary-dark', `rgba(${secondaryRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--secondary-light', `rgba(${secondaryRgb}, 0.1)`);
+            document.documentElement.style.setProperty('--secondary-lighter', `rgba(${secondaryRgb}, 0.05)`);
+            document.documentElement.style.setProperty('--accent-dark', `rgba(${accentRgb}, 0.3)`);
+            document.documentElement.style.setProperty('--accent-light', `rgba(${accentRgb}, 0.1)`);
+            
+            // Apply theme-specific background animations
+            applyThemeBackground(currentTheme, colors);
         }
 
-        function addToCart(name, price) {
-            alert(`Added "${name}" to cart for $${price.toFixed(2)}`);
+        function applyThemeBackground(themeId, colors) {
+            const bgShapes = document.querySelector('.bg-shapes');
+            if (!bgShapes) return;
+            
+            // Clear existing animations
+            bgShapes.innerHTML = '';
+            
+            const createShape = (className, style) => {
+                const shape = document.createElement('div');
+                shape.className = `shape ${className}`;
+                shape.setAttribute('style', style);
+                bgShapes.appendChild(shape);
+            };
+
+            switch(themeId) {
+                case 'christmas':
+                    // Falling snowflakes and emojis
+                    for (let i = 0; i < 25; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 5;
+                        const duration = 4 + Math.random() * 3;
+                        const emoji = ['❄️', '⛄', '🎄'][Math.floor(Math.random() * 3)];
+                        createShape(`snowflake-${i}`, `
+                            font-size: 2rem;
+                            top: -30px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: snowfall ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('christmas');
+                    break;
+
+                case 'halloween':
+                    // Floating pumpkins and ghosts with emojis
+                    createShape('ghost-1', `
+                        font-size: 3.5rem;
+                        top: 10%; left: 15%;
+                        animation: float 8s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '👻';
+                    
+                    createShape('pumpkin-1', `
+                        font-size: 3.5rem;
+                        top: 40%; right: 10%;
+                        animation: float 10s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🎃';
+                    showThemeMessage('halloween');
+                    break;
+
+                case 'thanksgiving':
+                    // Falling leaves and turkey emojis
+                    for (let i = 0; i < 20; i++) {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 4;
+                        const duration = 5 + Math.random() * 3;
+                        const emoji = ['🍂', '🍁', '🦃', '🌽'][Math.floor(Math.random() * 4)];
+                        createShape(`leaf-${i}`, `
+                            font-size: 2.5rem;
+                            top: -40px; left: ${left}%;
+                            opacity: 0.8;
+                            animation: falling ${duration}s linear infinite;
+                            animation-delay: ${delay}s;
+                        `);
+                        bgShapes.children[i].textContent = emoji;
+                    }
+                    showThemeMessage('thanksgiving');
+                    break;
+
+                case 'easter':
+                    // Bouncing eggs and bunnies
+                    createShape('egg-1', `
+                        font-size: 3.5rem;
+                        top: 20%; left: 10%;
+                        animation: bounce 3s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🥚';
+                    
+                    createShape('bunny-1', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 15%;
+                        animation: bounce 4s infinite ease-in-out;
+                        animation-delay: 0.5s;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🐰';
+                    showThemeMessage('easter');
+                    break;
+
+                case 'valentine':
+                    // Floating hearts and cupids
+                    createShape('heart-1', `
+                        font-size: 3.5rem;
+                        top: 15%; left: 20%;
+                        animation: float 5s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '💕';
+                    
+                    createShape('cupid', `
+                        font-size: 3.5rem;
+                        top: 45%; right: 20%;
+                        animation: float 6s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '💘';
+                    showThemeMessage('valentine');
+                    break;
+
+                case 'summer':
+                    // Floating sun and ice cream
+                    createShape('sun', `
+                        font-size: 4rem;
+                        top: 10%; right: 5%;
+                        opacity: 0.8;
+                        animation: float 6s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '☀️';
+                    
+                    createShape('icecream', `
+                        font-size: 3.5rem;
+                        top: 30%; left: 10%;
+                        animation: float 8s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🍦';
+                    showThemeMessage('summer');
+                    break;
+
+                case 'cyberpunk':
+                    // Spinning neon shapes with emojis
+                    createShape('cyber-1', `
+                        font-size: 3.5rem;
+                        top: 10%; left: 5%;
+                        animation: spin 10s linear infinite;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '⚡';
+                    
+                    createShape('cyber-2', `
+                        font-size: 3.5rem;
+                        top: 50%; right: 10%;
+                        animation: spin 8s linear infinite reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🤖';
+                    showThemeMessage('cyberpunk');
+                    break;
+
+                case 'forest':
+                    // Gentle floating particles with nature emojis
+                    createShape('leaf', `
+                        font-size: 3.5rem;
+                        top: 25%; left: 15%;
+                        animation: float 7s infinite ease-in-out;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🌿';
+                    
+                    createShape('tree', `
+                        font-size: 3.5rem;
+                        top: 60%; right: 20%;
+                        animation: float 9s infinite ease-in-out reverse;
+                    `);
+                    bgShapes.children[bgShapes.children.length - 1].textContent = '🌲';
+                    showThemeMessage('forest');
+                    break;
+
+                default:
+                    // Default theme - original shapes
+                    createShape('shape-1', `
+                        width: 400px; height: 400px;
+                        background: radial-gradient(circle, ${colors.primary}, transparent);
+                        top: -100px; left: -100px;
+                        animation: float 20s infinite ease-in-out;
+                    `);
+                    createShape('shape-2', `
+                        width: 300px; height: 300px;
+                        background: radial-gradient(circle, ${colors.accent}, transparent);
+                        bottom: -50px; right: -50px;
+                        animation: float 25s infinite ease-in-out reverse;
+                    `);
+                    createShape('shape-3', `
+                        width: 250px; height: 250px;
+                        background: radial-gradient(circle, ${colors.secondary}, transparent);
+                        top: 50%; right: 10%;
+                        animation: float 30s infinite ease-in-out;
+                    `);
+                    break;
+            }
+        }
+
+        function showThemeMessage(themeId) {
+            const messages = {
+                christmas: { emoji: '🎅', text: 'Merry Christmas!', subtext: 'Ho ho ho! Enjoy your shopping!' },
+                halloween: { emoji: '👻', text: 'Spooky Season!', subtext: 'If you dare to browse...' },
+                thanksgiving: { emoji: '🦃', text: 'Happy Thanksgiving!', subtext: 'Grateful for your visit!' },
+                easter: { emoji: '🐰', text: 'Happy Easter!', subtext: 'Hop into shopping!' },
+                valentine: { emoji: '💕', text: 'Love is in the Air!', subtext: 'Shop with your sweetheart!' },
+                summer: { emoji: '☀️', text: 'Summer Vibes!', subtext: 'Keep it cool and shop!' },
+                cyberpunk: { emoji: '🤖', text: 'Welcome to the Future!', subtext: 'Neon dreams await...' },
+                forest: { emoji: '🌲', text: 'Nature Calls!', subtext: 'Shop sustainably!' }
+            };
+
+            const message = messages[themeId] || messages.default;
+            
+            // Remove existing message if any
+            const existing = document.querySelector('.theme-message');
+            if (existing) existing.remove();
+            
+            // Create message element
+            const msgEl = document.createElement('div');
+            msgEl.className = 'theme-message';
+            msgEl.innerHTML = `
+                <div class="theme-message-emoji">${message.emoji}</div>
+                <div class="theme-message-text">${message.text}</div>
+                <div class="theme-message-subtext">${message.subtext}</div>
+            `;
+            document.body.appendChild(msgEl);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                msgEl.style.opacity = '0';
+                msgEl.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                msgEl.style.transition = 'all 0.4s ease-out';
+                setTimeout(() => msgEl.remove(), 400);
+            }, 3000);
+        }
+
+        loadTheme();
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                const grid = document.getElementById('productsGrid');
+
+                if (products.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <div class="empty-state-icon">📦</div>
+                            <p>No products available yet. Check back soon.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = products.map((product, index) => `
+                    <div class="product-card" style="animation-delay: ${index * 0.1}s;">
+                        <div class="product-image">${product.emoji || '🎨'}</div>
+                        <div class="product-content">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-desc">${product.description}</div>
+                            <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                            <button class="product-btn" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">Add to Cart</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsGrid').innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📦</div>
+                        <p>Unable to load products. Please check your connection.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(id);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        function calculateShipping(subtotal) {
+            if (subtotal >= SHIPPING_THRESHOLD) {
+                return 0; // Free shipping
+            }
+            return parseFloat((subtotal * SHIPPING_RATE).toFixed(2));
+        }
+
+        function calculateProgress(subtotal) {
+            const progress = Math.min((subtotal / SHIPPING_THRESHOLD) * 100, 100);
+            return Math.round(progress);
+        }
+
+        function updateCart() {
+            const cartCountEl = document.getElementById('cartCount');
+            const cartItemsEl = document.getElementById('cartItems');
+            const subtotalEl = document.getElementById('subtotal');
+            const shippingEl = document.getElementById('shippingCost');
+            const totalEl = document.getElementById('total');
+            const progressFillEl = document.getElementById('progressFill');
+            const progressTextEl = document.getElementById('progressText');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            // Update cart count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = 'flex';
+            } else {
+                cartCountEl.style.display = 'none';
+            }
+
+            // Calculate totals
+            const subtotal = parseFloat(cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+            const shipping = calculateShipping(subtotal);
+            const total = parseFloat((subtotal + shipping).toFixed(2));
+            const progress = calculateProgress(subtotal);
+
+            // Update progress bar
+            progressFillEl.style.width = progress + '%';
+            progressTextEl.textContent = progress + '%';
+
+            // Update totals display
+            subtotalEl.textContent = '$' + subtotal.toFixed(2);
+            shippingEl.textContent = shipping === 0 ? 'Free' : '$' + shipping.toFixed(2);
+            totalEl.textContent = '$' + total.toFixed(2);
+
+            // Enable/disable checkout button
+            checkoutBtn.disabled = cart.length === 0;
+
+            // Render cart items
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = `
+                    <div class="empty-cart">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🛒</div>
+                        <p>Your cart is empty</p>
+                    </div>
+                `;
+            } else {
+                cartItemsEl.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">−</button>
+                            <div class="qty-display">${item.quantity}</div>
+                            <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                            <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function toggleCart() {
+            document.getElementById('cartModal').classList.toggle('active');
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = calculateShipping(subtotal);
+            const total = subtotal + shipping;
+            
+            // Update checkout form with totals
+            document.getElementById('checkoutSubtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'Free' : '$' + shipping.toFixed(2);
+            document.getElementById('checkoutTotal').textContent = '$' + total.toFixed(2);
+            
+            // Show checkout modal
+            document.getElementById('checkoutModal').classList.add('active');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('active');
+        }
+
+        async function submitOrder(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipCode = document.getElementById('zipCode').value;
+            const country = document.getElementById('country').value;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = calculateShipping(subtotal);
+            const total = subtotal + shipping;
+
+            const order = {
+                customerName: firstName + ' ' + lastName,
+                email,
+                shippingAddress: {
+                    street: address,
+                    city,
+                    state,
+                    zipCode,
+                    country
+                },
+                items: cart,
+                subtotal: parseFloat(subtotal.toFixed(2)),
+                shipping: parseFloat(shipping.toFixed(2)),
+                total: parseFloat(total.toFixed(2)),
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(order)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Order placed successfully!\n\nOrder ID: ${result._id}\n\nThank you, ${firstName}!`);
+                    
+                    // Clear cart and close modals
+                    cart = [];
+                    updateCart();
+                    closeCheckout();
+                    toggleCart();
+                    
+                    // Reset form
+                    document.getElementById('checkoutForm').reset();
+                } else {
+                    alert('Error placing order. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Error placing order: ' + error.message);
+            }
         }
 
         loadProducts();
 
-        // Listen for storage changes (when admin updates products)
-        window.addEventListener('storage', loadProducts);
+        // Refresh products every 5 seconds
+        setInterval(loadProducts, 5000);
     </script>
 </body>
 </html>
